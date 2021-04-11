@@ -1,7 +1,5 @@
 package datastructs
 
-import "fmt"
-
 type Node struct {
 	Value      int
 	LeftChild  *Node
@@ -87,10 +85,16 @@ func leftLeaf(currentNode *Node) *Node {
 	}
 }
 
-func PrintInOrder(node *Node) {
+func (tree *Tree) ReturnInOrder() []int {
+	orderedValues := make([]int, 100)[0:0]
+	return returnInOrder(&(tree.RootNode), orderedValues)
+}
+
+func returnInOrder(node *Node, orderedValues []int) []int {
 	if node != nil {
-		PrintInOrder(node.LeftChild)
-		fmt.Println(node.Value)
-		PrintInOrder(node.RightChild)
+		orderedValues = returnInOrder(node.LeftChild, orderedValues)
+		orderedValues = append(orderedValues, node.Value)
+		orderedValues = returnInOrder(node.RightChild, orderedValues)
 	}
+	return orderedValues
 }
