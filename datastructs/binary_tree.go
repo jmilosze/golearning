@@ -15,8 +15,9 @@ func MakeTree(rootVal int) Tree {
 	return Tree{RootNode: Node{Value: rootVal, LeftChild: nil, RightChild: nil, Parent: nil}}
 }
 
-func (tree *Tree) Insert(value int) {
+func (tree *Tree) Insert(value int) *Tree {
 	insertNode(&(tree.RootNode), value)
+	return tree
 }
 
 func insertNode(currentNode *Node, value int) {
@@ -37,8 +38,9 @@ func insertNode(currentNode *Node, value int) {
 	}
 }
 
-func (tree *Tree) Delete(value int) {
+func (tree *Tree) Delete(value int) *Tree {
 	deleteNode(&(tree.RootNode), value)
+	return tree
 }
 
 func deleteNode(currentNode *Node, value int) {
@@ -70,10 +72,19 @@ func deleteNode(currentNode *Node, value int) {
 }
 
 func replaceCurrent(currentNode *Node, newNode *Node) {
-	if currentNode.Parent.LeftChild == currentNode {
-		currentNode.Parent.LeftChild = newNode
+	if currentNode.Parent != nil {
+		if currentNode.Parent.LeftChild == currentNode {
+			currentNode.Parent.LeftChild = newNode
+		} else {
+			currentNode.Parent.RightChild = newNode
+		}
 	} else {
-		currentNode.Parent.RightChild = newNode
+		// this means we are deleting the root node
+		// we do not allow to delete root node if it's the only node (case when newNode == nil)
+		if newNode != nil {
+			*currentNode = *newNode
+			currentNode.Parent = nil
+		}
 	}
 }
 
