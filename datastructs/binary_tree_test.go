@@ -32,34 +32,37 @@ func TestMakeTree(t *testing.T) {
 }
 
 func TestTree_Insert(t *testing.T) {
-	t.Run("nodes are inserted correctly", func(t *testing.T) {
-		tree := MakeTree(75)
-		tree.Insert(25)
-		tree.Insert(100)
-		tree.Insert(12)
-		tree.Insert(500)
-		tree.Insert(50)
-		tree.Insert(95)
+	testTrees := [2]Tree{MakeTree(75), MakeTree(75)}
 
-		want := []int{12, 25, 50, 75, 95, 100, 500}
-
-		if got := tree.ReturnInOrder(); !reflect.DeepEqual(got, want) {
-			t.Errorf("actual in order nodes after inserts = %v, want %v", got, want)
-		}
-	})
-
-	t.Run("nodes that are already present are not inserted", func(t *testing.T) {
-		tree := MakeTree(75)
-		tree.Insert(25)
-		tree.Insert(25)
-		tree.Insert(75)
-
-		want := []int{25, 75}
-
-		if got := tree.ReturnInOrder(); !reflect.DeepEqual(got, want) {
-			t.Errorf("actual in order nodes after inserts = %v, want %v", got, want)
-		}
-	})
+	tests := []struct {
+		name    string
+		tree    *Tree
+		inserts []int
+		want    []int
+	}{
+		{
+			"nodes are inserted correctly",
+			&testTrees[0],
+			[]int{25, 100, 12, 500, 50, 95},
+			[]int{12, 25, 50, 75, 95, 100, 500},
+		},
+		{
+			"nodes that are already present are not inserted",
+			&testTrees[1],
+			[]int{25, 25, 75},
+			[]int{25, 75},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			for _, ins := range tt.inserts {
+				tt.tree.Insert(ins)
+			}
+			if got := tt.tree.ReturnInOrder(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("actual in order nodes after Insert = %v, want %v", got, tt.want)
+			}
+		})
+	}
 }
 
 func TestTree_Delete_RootNode(t *testing.T) {
