@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestMakeTree(t *testing.T) {
+func TestMakeBSTree(t *testing.T) {
 	type args struct {
 		rootVal int
 	}
@@ -13,30 +13,30 @@ func TestMakeTree(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want Tree
+		want BSTree
 	}{
 		{
 			"invalid root node",
 			args{rootVal: 5},
-			Tree{RootNode: Node{Value: 5, LeftChild: nil, RightChild: nil, Parent: nil}},
+			BSTree{RootNode: BSTNode{Value: 5, LeftChild: nil, RightChild: nil, Parent: nil}},
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := MakeTree(tt.args.rootVal); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("MakeTree() = %v, want %v", got, tt.want)
+			if got := MakeBSTree(tt.args.rootVal); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("MakeBSTree() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
-func TestTree_Insert(t *testing.T) {
-	testTrees := [2]Tree{MakeTree(75), MakeTree(75)}
+func TestBSTree_Insert(t *testing.T) {
+	testTrees := [2]BSTree{MakeBSTree(75), MakeBSTree(75)}
 
 	tests := []struct {
 		name    string
-		tree    *Tree
+		tree    *BSTree
 		inserts []int
 		want    []int
 	}{
@@ -65,12 +65,12 @@ func TestTree_Insert(t *testing.T) {
 	}
 }
 
-func TestTree_Delete_RootNode(t *testing.T) {
-	testTrees := [4]Tree{MakeTree(75), MakeTree(75), MakeTree(75), MakeTree(75)}
+func TestBSTree_Delete_RootNode(t *testing.T) {
+	testTrees := [4]BSTree{MakeBSTree(75), MakeBSTree(75), MakeBSTree(75), MakeBSTree(75)}
 
 	tests := []struct {
 		name  string
-		tree  *Tree
+		tree  *BSTree
 		value int
 		want  []int
 	}{
@@ -108,12 +108,12 @@ func TestTree_Delete_RootNode(t *testing.T) {
 	}
 }
 
-func TestTree_Delete_NonRootNode(t *testing.T) {
-	testTrees := [4]Tree{MakeTree(75), MakeTree(75), MakeTree(75), MakeTree(75)}
+func TestBSTree_Delete_NonRootNode(t *testing.T) {
+	testTrees := [4]BSTree{MakeBSTree(75), MakeBSTree(75), MakeBSTree(75), MakeBSTree(75)}
 
 	tests := []struct {
 		name  string
-		tree  *Tree
+		tree  *BSTree
 		value int
 		want  []int
 	}{

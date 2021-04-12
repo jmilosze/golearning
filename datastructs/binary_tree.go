@@ -1,49 +1,49 @@
 package datastructs
 
-type Node struct {
+type BSTNode struct {
 	Value      int
-	LeftChild  *Node
-	RightChild *Node
-	Parent     *Node
+	LeftChild  *BSTNode
+	RightChild *BSTNode
+	Parent     *BSTNode
 }
 
-type Tree struct {
-	RootNode Node
+type BSTree struct {
+	RootNode BSTNode
 }
 
-func MakeTree(rootVal int) Tree {
-	return Tree{RootNode: Node{Value: rootVal, LeftChild: nil, RightChild: nil, Parent: nil}}
+func MakeBSTree(rootVal int) BSTree {
+	return BSTree{RootNode: BSTNode{Value: rootVal, LeftChild: nil, RightChild: nil, Parent: nil}}
 }
 
-func (tree *Tree) Insert(value int) *Tree {
+func (tree *BSTree) Insert(value int) *BSTree {
 	insertNode(&(tree.RootNode), value)
 	return tree
 }
 
-func insertNode(currentNode *Node, value int) {
+func insertNode(currentNode *BSTNode, value int) {
 	if value == currentNode.Value {
 		//	node already exists, do nothing
 	} else if value < currentNode.Value {
 		if currentNode.LeftChild != nil {
 			insertNode(currentNode.LeftChild, value)
 		} else {
-			currentNode.LeftChild = &Node{Value: value, LeftChild: nil, RightChild: nil, Parent: currentNode}
+			currentNode.LeftChild = &BSTNode{Value: value, LeftChild: nil, RightChild: nil, Parent: currentNode}
 		}
 	} else {
 		if currentNode.RightChild != nil {
 			insertNode(currentNode.RightChild, value)
 		} else {
-			currentNode.RightChild = &Node{Value: value, LeftChild: nil, RightChild: nil, Parent: currentNode}
+			currentNode.RightChild = &BSTNode{Value: value, LeftChild: nil, RightChild: nil, Parent: currentNode}
 		}
 	}
 }
 
-func (tree *Tree) Delete(value int) *Tree {
+func (tree *BSTree) Delete(value int) *BSTree {
 	deleteNode(&(tree.RootNode), value)
 	return tree
 }
 
-func deleteNode(currentNode *Node, value int) {
+func deleteNode(currentNode *BSTNode, value int) {
 	if value == currentNode.Value {
 		if currentNode.LeftChild == nil && currentNode.RightChild == nil {
 			replaceCurrent(currentNode, nil)
@@ -71,7 +71,7 @@ func deleteNode(currentNode *Node, value int) {
 	}
 }
 
-func replaceCurrent(currentNode *Node, newNode *Node) {
+func replaceCurrent(currentNode *BSTNode, newNode *BSTNode) {
 	if currentNode.Parent != nil {
 		if currentNode.Parent.LeftChild == currentNode {
 			currentNode.Parent.LeftChild = newNode
@@ -88,7 +88,7 @@ func replaceCurrent(currentNode *Node, newNode *Node) {
 	}
 }
 
-func leftLeaf(currentNode *Node) *Node {
+func leftLeaf(currentNode *BSTNode) *BSTNode {
 	if currentNode.LeftChild != nil {
 		return leftLeaf(currentNode.LeftChild)
 	} else {
@@ -96,12 +96,12 @@ func leftLeaf(currentNode *Node) *Node {
 	}
 }
 
-func (tree *Tree) ReturnInOrder() []int {
+func (tree *BSTree) ReturnInOrder() []int {
 	orderedValues := make([]int, 100)[0:0]
 	return returnInOrder(&(tree.RootNode), orderedValues)
 }
 
-func returnInOrder(node *Node, orderedValues []int) []int {
+func returnInOrder(node *BSTNode, orderedValues []int) []int {
 	if node != nil {
 		orderedValues = returnInOrder(node.LeftChild, orderedValues)
 		orderedValues = append(orderedValues, node.Value)

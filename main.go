@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	newTree := ds.MakeTree(75)
+	newTree := ds.MakeBSTree(75)
 	newTree.Insert(40)
 	newTree.Insert(80)
 
