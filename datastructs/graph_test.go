@@ -70,6 +70,20 @@ func TestGraph_AddConnection(t *testing.T) {
 			true,
 		},
 		{
+			"adding connection to itself causes error",
+			Graph{10: make(map[int]int), 20: make(map[int]int), 30: make(map[int]int)},
+			args{10, 10, 1},
+			&Graph{10: make(map[int]int), 20: make(map[int]int), 30: make(map[int]int)},
+			true,
+		},
+		{
+			"adding connection with negative weight causes error",
+			Graph{10: make(map[int]int), 20: make(map[int]int), 30: make(map[int]int)},
+			args{10, 20, -1},
+			&Graph{10: make(map[int]int), 20: make(map[int]int), 30: make(map[int]int)},
+			true,
+		},
+		{
 			"adding connection adds connection correctly",
 			Graph{10: make(map[int]int), 20: make(map[int]int), 30: make(map[int]int)},
 			args{10, 20, 7},

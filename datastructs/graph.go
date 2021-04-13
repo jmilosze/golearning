@@ -13,6 +13,12 @@ func (graph *Graph) AddNode(value int) (*Graph, error) {
 }
 
 func (graph *Graph) AddConnection(valueFrom int, valueTo int, weight int) (*Graph, error) {
+	if valueFrom == valueTo {
+		return graph, fmt.Errorf("cannot connect node %v to itself", valueFrom)
+	}
+	if weight < 0 {
+		return graph, fmt.Errorf("negative weights (%v) are not allowed", weight)
+	}
 	if _, ok := (*graph)[valueFrom]; ok != true {
 		return graph, fmt.Errorf("no node with value %v", valueFrom)
 	}
