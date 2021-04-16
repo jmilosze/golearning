@@ -1,14 +1,19 @@
 package main
 
-import (
-	"fmt"
-	ds "golearning/datastructs"
-)
+import "fmt"
+
+type T struct {
+	F1 string
+	F2 []int
+}
 
 func main() {
-	newTree := ds.MakeBSTree(75)
-	newTree.Insert(40)
-	newTree.Insert(80)
+	p := T{"some string", []int{10, 20}}
+	q := p
 
-	fmt.Println(newTree.ReturnInOrder())
+	q.F1 = "zxc"
+	q.F2[0] = 100
+
+	fmt.Println(p)
+	fmt.Println(q)
 }

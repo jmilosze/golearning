@@ -122,3 +122,44 @@ func TestGraph_AddConnection(t *testing.T) {
 		})
 	}
 }
+
+func TestGraph_BreadthFirst(t *testing.T) {
+	type args struct {
+		valueFrom int
+		valueTo   int
+	}
+	tests := []struct {
+		name    string
+		graph   Graph
+		args    args
+		want    bool
+		wantErr bool
+	}{
+		{
+			"valueFrom not in the graph",
+			Graph{10: emptyNode(), 20: emptyNode()},
+			args{5, 20},
+			false,
+			true,
+		},
+		{
+			"valueTo not in the graph",
+			Graph{10: emptyNode(), 20: emptyNode()},
+			args{10, 25},
+			false,
+			true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := tt.graph.BreadthFirst(tt.args.valueFrom, tt.args.valueTo)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("BreadthFirst() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if got != tt.want {
+				t.Errorf("BreadthFirst() got = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

@@ -69,6 +69,7 @@ func (graph *Graph) BreadthFirst(valueFrom int, valueTo int) (bool, error) {
 			if (*graph)[neighbourNode].parent == 0 {
 				(*graph)[neighbourNode].parent = currentNode
 			}
+			toCheck = append(toCheck, neighbourNode)
 		}
 	}
 	return false, fmt.Errorf("no path from node %v to node %v", valueFrom, valueTo)
