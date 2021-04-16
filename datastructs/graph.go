@@ -7,7 +7,7 @@ type GNode struct {
 	parent      int
 }
 
-type Graph map[int]GNode
+type Graph map[int]*GNode
 
 func (graph *Graph) AddNode(value int) (*Graph, error) {
 	if value < 1 {
@@ -17,7 +17,7 @@ func (graph *Graph) AddNode(value int) (*Graph, error) {
 	if _, ok := (*graph)[value]; ok == true {
 		return graph, fmt.Errorf("node %v already exists", value)
 	}
-	(*graph)[value] = GNode{make(map[int]int), 0}
+	(*graph)[value] = &GNode{make(map[int]int), 0}
 	return graph, nil
 }
 
@@ -39,23 +39,37 @@ func (graph *Graph) AddConnection(valueFrom int, valueTo int, weight int) (*Grap
 	return graph, nil
 }
 
-//func BreadthFirst(graph Graph, valueFrom int, valueTo int) ([]int, error) {
-//	if _, ok := graph[valueFrom]; ok != true {
-//		return make([]int, 0), fmt.Errorf("no node with value %v", valueFrom)
-//	}
-//	if _, ok := graph[valueTo]; ok != true {
-//		return make([]int, 0), fmt.Errorf("no node with value %v", valueFrom)
-//	}
-//
-//	toDo := make([]int, 100)[0:0]
-//	toDo[0] = valueFrom
-//
-//	for len(toDo) > 0 {
-//		nextNode := toDo[0]
-//		toDo = toDo[1:]
-//
-//		if nextNode == valueTo {
-//			return
-//		}
-//	}
-//}
+func (graph *Graph) BreadthFirst(valueFrom int, valueTo int) (bool, error) {
+	if _, ok := (*graph)[valueFrom]; ok != true {
+		return false, fmt.Errorf("no node with value %v", valueFrom)
+	}
+	if _, ok := (*graph)[valueTo]; ok != true {
+		return false, fmt.Errorf("no node with value %v", valueFrom)
+	}
+
+	checked := make(map[int]bool, 100)
+	toCheck := make([]int, 100)[0:0]
+	toCheck[0] = valueFrom
+
+	for len(toCheck) > 0 {
+		currentNode := toCheck[0]
+		toCheck = toCheck[1:]
+
+		checked[currentNode] = true
+
+		if currentNode == valueTo {
+			return true, nil
+		}
+
+		for neighbourNode := range (*graph)[currentNode].connections {
+			if _, ok := checked[neighbourNode]; ok {
+				continue
+			}
+
+			if (*graph)[neighbourNode].parent == 0 {
+				(*graph)[neighbourNode].parent = currentNode
+			}
+		}
+	}
+	return false, fmt.Errorf("no path from node %v to node %v", valueFrom, valueTo)
+}

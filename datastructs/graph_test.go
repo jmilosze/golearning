@@ -5,9 +5,11 @@ import (
 	"testing"
 )
 
-func TestGraph_AddNode(t *testing.T) {
-	node := GNode{make(map[int]int), 0}
+func emptyNode() *GNode {
+	return &GNode{make(map[int]int), 0}
+}
 
+func TestGraph_AddNode(t *testing.T) {
 	tests := []struct {
 		name         string
 		graph        Graph
@@ -17,23 +19,23 @@ func TestGraph_AddNode(t *testing.T) {
 	}{
 		{
 			"adding existing node causes error",
-			Graph{10: node},
+			Graph{10: emptyNode()},
 			10,
-			&Graph{10: node},
+			&Graph{10: &GNode{make(map[int]int), 0}},
 			true,
 		},
 		{
 			"adding node smaller than 1 node causes error",
-			Graph{10: node},
+			Graph{10: emptyNode()},
 			0,
-			&Graph{10: node},
+			&Graph{10: emptyNode()},
 			true,
 		},
 		{
 			"adding new node adds node",
-			Graph{10: node},
+			Graph{10: emptyNode()},
 			20,
-			&Graph{10: node, 20: node},
+			&Graph{10: emptyNode(), 20: emptyNode()},
 			false,
 		},
 	}
@@ -52,8 +54,6 @@ func TestGraph_AddNode(t *testing.T) {
 }
 
 func TestGraph_AddConnection(t *testing.T) {
-	nodeNoConn := GNode{make(map[int]int), 0}
-
 	type args struct {
 		valueFrom int
 		valueTo   int
@@ -68,44 +68,44 @@ func TestGraph_AddConnection(t *testing.T) {
 	}{
 		{
 			"adding connection from non-existing nodeNoConn causes error",
-			Graph{10: nodeNoConn, 20: nodeNoConn, 30: nodeNoConn},
+			Graph{10: emptyNode(), 20: emptyNode(), 30: emptyNode()},
 			args{5, 20, 7},
-			&Graph{10: nodeNoConn, 20: nodeNoConn, 30: nodeNoConn},
+			&Graph{10: emptyNode(), 20: emptyNode(), 30: emptyNode()},
 			true,
 		},
 		{
 			"adding connection to non-existing nodeNoConn causes error",
-			Graph{10: nodeNoConn, 20: nodeNoConn, 30: nodeNoConn},
+			Graph{10: emptyNode(), 20: emptyNode(), 30: emptyNode()},
 			args{10, 5, 7},
-			&Graph{10: nodeNoConn, 20: nodeNoConn, 30: nodeNoConn},
+			&Graph{10: emptyNode(), 20: emptyNode(), 30: emptyNode()},
 			true,
 		},
 		{
 			"adding connection to itself causes error",
-			Graph{10: nodeNoConn, 20: nodeNoConn, 30: nodeNoConn},
+			Graph{10: emptyNode(), 20: emptyNode(), 30: emptyNode()},
 			args{10, 10, 1},
-			&Graph{10: nodeNoConn, 20: nodeNoConn, 30: nodeNoConn},
+			&Graph{10: emptyNode(), 20: emptyNode(), 30: emptyNode()},
 			true,
 		},
 		{
 			"adding connection with negative weight causes error",
-			Graph{10: nodeNoConn, 20: nodeNoConn, 30: nodeNoConn},
+			Graph{10: emptyNode(), 20: emptyNode(), 30: emptyNode()},
 			args{10, 20, -1},
-			&Graph{10: nodeNoConn, 20: nodeNoConn, 30: nodeNoConn},
+			&Graph{10: emptyNode(), 20: emptyNode(), 30: emptyNode()},
 			true,
 		},
 		{
 			"adding connection adds connection correctly",
-			Graph{10: nodeNoConn, 20: nodeNoConn, 30: nodeNoConn},
+			Graph{10: emptyNode(), 20: emptyNode(), 30: emptyNode()},
 			args{10, 20, 7},
-			&Graph{10: GNode{map[int]int{20: 7}, 0}, 20: nodeNoConn, 30: nodeNoConn},
+			&Graph{10: &GNode{map[int]int{20: 7}, 0}, 20: emptyNode(), 30: emptyNode()},
 			false,
 		},
 		{
 			"adding connection overrides existing connection",
-			Graph{10: GNode{map[int]int{20: 7}, 0}, 20: nodeNoConn, 30: nodeNoConn},
+			Graph{10: &GNode{map[int]int{20: 7}, 0}, 20: emptyNode(), 30: emptyNode()},
 			args{10, 20, 1},
-			&Graph{10: GNode{map[int]int{20: 1}, 0}, 20: nodeNoConn, 30: nodeNoConn},
+			&Graph{10: &GNode{map[int]int{20: 1}, 0}, 20: emptyNode(), 30: emptyNode()},
 			false,
 		},
 	}
