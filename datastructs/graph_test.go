@@ -184,9 +184,37 @@ func TestGraph_BreadthFirst_CorrectOrder(t *testing.T) {
 	}{
 		{
 			"3 nodes one by one",
-			Graph{10: &GNode{map[int]int{20: 1}, 0}, 20: &GNode{map[int]int{30: 1}, 0}, 30: emptyNode()},
+			Graph{
+				10: &GNode{map[int]int{20: 1}, 0},
+				20: &GNode{map[int]int{30: 1}, 0},
+				30: emptyNode(),
+			},
 			args{10, 30},
 			[]int{10, 20, 30},
+		},
+		{
+			"4 nodes in circle",
+			Graph{
+				10: &GNode{map[int]int{20: 1, 40: 1}, 0},
+				20: &GNode{map[int]int{30: 1}, 0},
+				30: &GNode{map[int]int{40: 1}, 0},
+				40: &GNode{map[int]int{10: 1}, 0},
+			},
+			args{10, 40},
+			[]int{10, 40},
+		},
+		{
+			"6 nodes",
+			Graph{
+				10: &GNode{map[int]int{20: 1, 30: 1}, 0},
+				20: &GNode{map[int]int{40: 1, 50: 1, 10: 1}, 0},
+				30: &GNode{map[int]int{20: 1, 40: 1}, 0},
+				40: &GNode{map[int]int{50: 1, 20: 1}, 0},
+				50: &GNode{map[int]int{60: 1}, 0},
+				60: emptyNode(),
+			},
+			args{10, 60},
+			[]int{10, 20, 50, 60},
 		},
 	}
 	for _, tt := range tests {
