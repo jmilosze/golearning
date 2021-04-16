@@ -39,17 +39,33 @@ func (graph *Graph) AddConnection(valueFrom int, valueTo int, weight int) (*Grap
 	return graph, nil
 }
 
-func (graph *Graph) BreadthFirst(valueFrom int, valueTo int) (bool, error) {
+func extractPath(graph *Graph, valueTo int) []int {
+	path := make([]int, 100)[0:0]
+	path = append(path, valueTo)
+	parentValue := (*graph)[valueTo].parent
+	for parentValue > 0 {
+		path = append(path, parentValue)
+		parentValue = (*graph)[parentValue].parent
+	}
+
+	for i, j := 0, len(path)-1; i < j; i, j = i+1, j-1 {
+		path[i], path[j] = path[j], path[i]
+	}
+
+	return path
+}
+
+func (graph *Graph) BreadthFirst(valueFrom int, valueTo int) ([]int, error) {
 	if _, ok := (*graph)[valueFrom]; ok != true {
-		return false, fmt.Errorf("no node with value %v", valueFrom)
+		return make([]int, 0), fmt.Errorf("no node with value %v", valueFrom)
 	}
 	if _, ok := (*graph)[valueTo]; ok != true {
-		return false, fmt.Errorf("no node with value %v", valueFrom)
+		return make([]int, 0), fmt.Errorf("no node with value %v", valueFrom)
 	}
 
 	checked := make(map[int]bool, 100)
 	toCheck := make([]int, 100)[0:0]
-	toCheck[0] = valueFrom
+	toCheck = append(toCheck, valueFrom)
 
 	for len(toCheck) > 0 {
 		currentNode := toCheck[0]
@@ -58,7 +74,7 @@ func (graph *Graph) BreadthFirst(valueFrom int, valueTo int) (bool, error) {
 		checked[currentNode] = true
 
 		if currentNode == valueTo {
-			return true, nil
+			return extractPath(graph, valueTo), nil
 		}
 
 		for neighbourNode := range (*graph)[currentNode].connections {
@@ -72,5 +88,5 @@ func (graph *Graph) BreadthFirst(valueFrom int, valueTo int) (bool, error) {
 			toCheck = append(toCheck, neighbourNode)
 		}
 	}
-	return false, fmt.Errorf("no path from node %v to node %v", valueFrom, valueTo)
+	return make([]int, 0), fmt.Errorf("no path from node %v to node %v", valueFrom, valueTo)
 }

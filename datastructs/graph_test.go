@@ -123,7 +123,7 @@ func TestGraph_AddConnection(t *testing.T) {
 	}
 }
 
-func TestGraph_BreadthFirst(t *testing.T) {
+func TestGraph_BreadthFirst_Errors(t *testing.T) {
 	type args struct {
 		valueFrom int
 		valueTo   int
@@ -132,21 +132,28 @@ func TestGraph_BreadthFirst(t *testing.T) {
 		name    string
 		graph   Graph
 		args    args
-		want    bool
+		want    []int
 		wantErr bool
 	}{
 		{
 			"valueFrom not in the graph",
 			Graph{10: emptyNode(), 20: emptyNode()},
 			args{5, 20},
-			false,
+			make([]int, 0),
 			true,
 		},
 		{
 			"valueTo not in the graph",
 			Graph{10: emptyNode(), 20: emptyNode()},
 			args{10, 25},
-			false,
+			make([]int, 0),
+			true,
+		},
+		{
+			"no path between nodes",
+			Graph{10: emptyNode(), 20: emptyNode()},
+			args{10, 20},
+			make([]int, 0),
 			true,
 		},
 	}
@@ -157,7 +164,39 @@ func TestGraph_BreadthFirst(t *testing.T) {
 				t.Errorf("BreadthFirst() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if got != tt.want {
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("BreadthFirst() got = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestGraph_BreadthFirst_CorrectOrder(t *testing.T) {
+	type args struct {
+		valueFrom int
+		valueTo   int
+	}
+	tests := []struct {
+		name  string
+		graph Graph
+		args  args
+		want  []int
+	}{
+		{
+			"3 nodes one by one",
+			Graph{10: &GNode{map[int]int{20: 1}, 0}, 20: &GNode{map[int]int{30: 1}, 0}, 30: emptyNode()},
+			args{10, 30},
+			[]int{10, 20, 30},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := tt.graph.BreadthFirst(tt.args.valueFrom, tt.args.valueTo)
+			if err != nil {
+				t.Errorf("BreadthFirst() error = %v", err)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("BreadthFirst() got = %v, want %v", got, tt.want)
 			}
 		})
