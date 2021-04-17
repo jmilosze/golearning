@@ -4,7 +4,6 @@ import "fmt"
 
 type GNode struct {
 	connections map[int]int
-	parent      int
 }
 
 type Graph map[int]*GNode
@@ -17,7 +16,7 @@ func (graph *Graph) AddNode(value int) (*Graph, error) {
 	if _, ok := (*graph)[value]; ok == true {
 		return graph, fmt.Errorf("node %v already exists", value)
 	}
-	(*graph)[value] = &GNode{make(map[int]int), 0}
+	(*graph)[value] = &GNode{make(map[int]int)}
 	return graph, nil
 }
 
@@ -39,13 +38,13 @@ func (graph *Graph) AddConnection(valueFrom int, valueTo int, weight int) (*Grap
 	return graph, nil
 }
 
-func extractPath(graph *Graph, valueTo int) []int {
+func extractPath(parents map[int]int, valueTo int) []int {
 	path := make([]int, 100)[0:0]
 	path = append(path, valueTo)
-	parentValue := (*graph)[valueTo].parent
+	parentValue := parents[valueTo]
 	for parentValue > 0 {
 		path = append(path, parentValue)
-		parentValue = (*graph)[parentValue].parent
+		parentValue = parents[parentValue]
 	}
 
 	for i, j := 0, len(path)-1; i < j; i, j = i+1, j-1 {
@@ -63,6 +62,11 @@ func (graph *Graph) BreadthFirst(valueFrom int, valueTo int) ([]int, error) {
 		return make([]int, 0), fmt.Errorf("no node with value %v", valueFrom)
 	}
 
+	parents := make(map[int]int, 100)
+	for node := range *graph {
+		parents[node] = 0
+	}
+
 	checked := make(map[int]bool, 100)
 	toCheck := make([]int, 100)[0:0]
 	toCheck = append(toCheck, valueFrom)
@@ -74,7 +78,7 @@ func (graph *Graph) BreadthFirst(valueFrom int, valueTo int) ([]int, error) {
 		checked[currentNode] = true
 
 		if currentNode == valueTo {
-			return extractPath(graph, valueTo), nil
+			return extractPath(parents, valueTo), nil
 		}
 
 		for neighbourNode := range (*graph)[currentNode].connections {
@@ -82,8 +86,8 @@ func (graph *Graph) BreadthFirst(valueFrom int, valueTo int) ([]int, error) {
 				continue
 			}
 
-			if (*graph)[neighbourNode].parent == 0 {
-				(*graph)[neighbourNode].parent = currentNode
+			if parents[neighbourNode] == 0 {
+				parents[neighbourNode] = currentNode
 			}
 			toCheck = append(toCheck, neighbourNode)
 		}

@@ -6,7 +6,7 @@ import (
 )
 
 func emptyNode() *GNode {
-	return &GNode{make(map[int]int), 0}
+	return &GNode{make(map[int]int)}
 }
 
 func TestGraph_AddNode(t *testing.T) {
@@ -21,7 +21,7 @@ func TestGraph_AddNode(t *testing.T) {
 			"adding existing node causes error",
 			Graph{10: emptyNode()},
 			10,
-			&Graph{10: &GNode{make(map[int]int), 0}},
+			&Graph{10: &GNode{make(map[int]int)}},
 			true,
 		},
 		{
@@ -98,14 +98,14 @@ func TestGraph_AddConnection(t *testing.T) {
 			"adding connection adds connection correctly",
 			Graph{10: emptyNode(), 20: emptyNode(), 30: emptyNode()},
 			args{10, 20, 7},
-			&Graph{10: &GNode{map[int]int{20: 7}, 0}, 20: emptyNode(), 30: emptyNode()},
+			&Graph{10: &GNode{map[int]int{20: 7}}, 20: emptyNode(), 30: emptyNode()},
 			false,
 		},
 		{
 			"adding connection overrides existing connection",
-			Graph{10: &GNode{map[int]int{20: 7}, 0}, 20: emptyNode(), 30: emptyNode()},
+			Graph{10: &GNode{map[int]int{20: 7}}, 20: emptyNode(), 30: emptyNode()},
 			args{10, 20, 1},
-			&Graph{10: &GNode{map[int]int{20: 1}, 0}, 20: emptyNode(), 30: emptyNode()},
+			&Graph{10: &GNode{map[int]int{20: 1}}, 20: emptyNode(), 30: emptyNode()},
 			false,
 		},
 	}
@@ -185,8 +185,8 @@ func TestGraph_BreadthFirst_CorrectOrder(t *testing.T) {
 		{
 			"3 nodes one by one",
 			Graph{
-				10: &GNode{map[int]int{20: 1}, 0},
-				20: &GNode{map[int]int{30: 1}, 0},
+				10: &GNode{map[int]int{20: 1}},
+				20: &GNode{map[int]int{30: 1}},
 				30: emptyNode(),
 			},
 			args{10, 30},
@@ -195,10 +195,10 @@ func TestGraph_BreadthFirst_CorrectOrder(t *testing.T) {
 		{
 			"4 nodes in circle",
 			Graph{
-				10: &GNode{map[int]int{20: 1, 40: 1}, 0},
-				20: &GNode{map[int]int{30: 1}, 0},
-				30: &GNode{map[int]int{40: 1}, 0},
-				40: &GNode{map[int]int{10: 1}, 0},
+				10: &GNode{map[int]int{20: 1, 40: 1}},
+				20: &GNode{map[int]int{30: 1}},
+				30: &GNode{map[int]int{40: 1}},
+				40: &GNode{map[int]int{10: 1}},
 			},
 			args{10, 40},
 			[]int{10, 40},
@@ -206,11 +206,11 @@ func TestGraph_BreadthFirst_CorrectOrder(t *testing.T) {
 		{
 			"6 nodes",
 			Graph{
-				10: &GNode{map[int]int{20: 1, 30: 1}, 0},
-				20: &GNode{map[int]int{40: 1, 50: 1, 10: 1}, 0},
-				30: &GNode{map[int]int{20: 1, 40: 1}, 0},
-				40: &GNode{map[int]int{50: 1, 20: 1}, 0},
-				50: &GNode{map[int]int{60: 1}, 0},
+				10: &GNode{map[int]int{20: 1, 30: 1}},
+				20: &GNode{map[int]int{40: 1, 50: 1, 10: 1}},
+				30: &GNode{map[int]int{20: 1, 40: 1}},
+				40: &GNode{map[int]int{50: 1, 20: 1}},
+				50: &GNode{map[int]int{60: 1}},
 				60: emptyNode(),
 			},
 			args{10, 60},
