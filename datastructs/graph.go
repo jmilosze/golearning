@@ -41,10 +41,10 @@ func (graph *Graph) AddConnection(valueFrom int, valueTo int, weight int) (*Grap
 func extractPath(parents map[int]int, valueTo int) []int {
 	path := make([]int, 100)[0:0]
 	path = append(path, valueTo)
-	parentValue := parents[valueTo]
-	for parentValue > 0 {
+	parentValue, ok := parents[valueTo]
+	for ok {
 		path = append(path, parentValue)
-		parentValue = parents[parentValue]
+		parentValue, ok = parents[parentValue]
 	}
 
 	for i, j := 0, len(path)-1; i < j; i, j = i+1, j-1 {
@@ -63,10 +63,6 @@ func (graph *Graph) BreadthFirst(valueFrom int, valueTo int) ([]int, error) {
 	}
 
 	parents := make(map[int]int, 100)
-	for node := range *graph {
-		parents[node] = 0
-	}
-
 	checked := make(map[int]bool, 100)
 	toCheck := make([]int, 100)[0:0]
 	toCheck = append(toCheck, valueFrom)
@@ -86,11 +82,16 @@ func (graph *Graph) BreadthFirst(valueFrom int, valueTo int) ([]int, error) {
 				continue
 			}
 
-			if parents[neighbourNode] == 0 {
+			if _, ok := parents[neighbourNode]; !ok {
 				parents[neighbourNode] = currentNode
 			}
 			toCheck = append(toCheck, neighbourNode)
 		}
 	}
+	return make([]int, 0), fmt.Errorf("no path from node %v to node %v", valueFrom, valueTo)
+}
+
+func (graph *Graph) Dijkstra(valueFrom int, valueTo int) ([]int, error) {
+
 	return make([]int, 0), fmt.Errorf("no path from node %v to node %v", valueFrom, valueTo)
 }
