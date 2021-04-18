@@ -1,6 +1,9 @@
 package datastructs
 
-import "fmt"
+import (
+	"fmt"
+	"math/bits"
+)
 
 type GNode struct {
 	connections map[int]int
@@ -91,7 +94,29 @@ func (graph *Graph) BreadthFirst(valueFrom int, valueTo int) ([]int, error) {
 	return make([]int, 0), fmt.Errorf("no path from node %v to node %v", valueFrom, valueTo)
 }
 
+type nodeInfo struct {
+	processed bool
+	cost      int
+	parent    int
+}
+
 func (graph *Graph) Dijkstra(valueFrom int, valueTo int) ([]int, error) {
+	if valueFrom == valueFrom {
+		return []int{valueFrom}, nil
+	}
+
+	nodes := make(map[int]*nodeInfo, 100)
+
+	for node := range *graph {
+		if node != valueFrom {
+			nodes[node] = &nodeInfo{false, 1<<(bits.UintSize-1) - 1, 0}
+		}
+	}
+
+	for neighbourNode, weight := range (*graph)[valueFrom].connections {
+		nodes[neighbourNode].parent = valueFrom
+		nodes[neighbourNode].cost = weight
+	}
 
 	return make([]int, 0), fmt.Errorf("no path from node %v to node %v", valueFrom, valueTo)
 }

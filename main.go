@@ -2,20 +2,19 @@ package main
 
 import (
 	"fmt"
+	"math/bits"
 )
 
-type T struct {
-	F1 string
-	F2 []int
-}
-
 func main() {
-	p := T{"some string", []int{10, 20}}
-	q := p
+	type a struct {
+		b int
+		c *int
+	}
 
-	q.F1 = "zxc"
-	q.F2[0] = 100
+	fmt.Println(1<<(bits.UintSize-1) - 1)
 
-	fmt.Println(p)
-	fmt.Println(q)
+	zxc := make(map[int]a)
+
+	cv := 2
+	zxc[0] = a{1, &cv}
 }
