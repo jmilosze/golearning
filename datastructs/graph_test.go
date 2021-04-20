@@ -300,22 +300,33 @@ func TestGraph_Dijkstra_correctOrder(t *testing.T) {
 		args  args
 		want  []int
 	}{
+		//{
+		//	"valueTo is equal to valueFrom",
+		//	Graph{
+		//		10: &GNode{map[int]int{20: 1}},
+		//		20: &GNode{map[int]int{30: 2}},
+		//		30: emptyNode(),
+		//	},
+		//	args{10, 10},
+		//	[]int{10},
+		//},
 		{
-			"valueTo is equal to valueFrom",
+			"4 nodes",
 			Graph{
-				10: &GNode{map[int]int{20: 1}},
-				20: &GNode{map[int]int{30: 2}},
-				30: emptyNode(),
+				1: &GNode{map[int]int{2: 6, 3: 1}},
+				2: &GNode{map[int]int{4: 2}},
+				3: &GNode{map[int]int{2: 3, 4: 8}},
+				4: emptyNode(),
 			},
-			args{10, 10},
-			[]int{10},
+			args{1, 4},
+			[]int{1, 3, 2, 4},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := tt.graph.BreadthFirst(tt.args.valueFrom, tt.args.valueTo)
+			got, err := tt.graph.Dijkstra(tt.args.valueFrom, tt.args.valueTo)
 			if err != nil {
-				t.Errorf("BreadthFirst() error = %v", err)
+				t.Errorf("Dijkstra() error = %v", err)
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {

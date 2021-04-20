@@ -144,20 +144,19 @@ func (graph *Graph) Dijkstra(valueFrom int, valueTo int) ([]int, error) {
 	nodes := make(map[int]*nodeInfo, 100)
 
 	for node := range *graph {
-		if node != valueFrom {
-			nodes[node] = &nodeInfo{false, maxInt, 0}
-		}
+		nodes[node] = &nodeInfo{false, maxInt, 0}
 	}
 
+	nodes[valueFrom].processed = true
 	for neighbourNode, weight := range (*graph)[valueFrom].connections {
 		nodes[neighbourNode].parent = valueFrom
 		nodes[neighbourNode].cost = weight
 	}
 
 	for nodeValue := nextNode(nodes); nodeValue > 0; nodeValue = nextNode(nodes) {
-		for neighbourNode, neighbourNodeWeight := range (*graph)[valueFrom].connections {
+		for neighbourNode, neighbourNodeWeight := range (*graph)[nodeValue].connections {
 			newCost := nodes[nodeValue].cost + neighbourNodeWeight
-			if newCost > nodes[neighbourNode].cost {
+			if newCost < nodes[neighbourNode].cost {
 				nodes[neighbourNode].cost = newCost
 				nodes[neighbourNode].parent = nodeValue
 			}
