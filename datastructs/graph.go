@@ -41,7 +41,7 @@ func (graph *Graph) AddConnection(valueFrom int, valueTo int, weight int) (*Grap
 	return graph, nil
 }
 
-func extractPath(parents map[int]int, valueTo int) []int {
+func extractBreadthFirstPath(parents map[int]int, valueTo int) []int {
 	path := make([]int, 100)[0:0]
 	path = append(path, valueTo)
 	parentValue, ok := parents[valueTo]
@@ -77,7 +77,7 @@ func (graph *Graph) BreadthFirst(valueFrom int, valueTo int) ([]int, error) {
 		checked[currentNode] = true
 
 		if currentNode == valueTo {
-			return extractPath(parents, valueTo), nil
+			return extractBreadthFirstPath(parents, valueTo), nil
 		}
 
 		for neighbourNode := range (*graph)[currentNode].connections {
@@ -94,10 +94,39 @@ func (graph *Graph) BreadthFirst(valueFrom int, valueTo int) ([]int, error) {
 	return make([]int, 0), fmt.Errorf("no path from node %v to node %v", valueFrom, valueTo)
 }
 
+const maxInt = 1<<(bits.UintSize-1) - 1
+
 type nodeInfo struct {
 	processed bool
 	cost      int
 	parent    int
+}
+
+func nextNode(nodes map[int]*nodeInfo) int {
+	nextNodeVal := 0
+	nextNodeCost := maxInt
+
+	for node, nodeData := range nodes {
+		if nodeData.cost < nextNodeCost && !nodeData.processed {
+			nextNodeVal = node
+		}
+	}
+	return nextNodeVal
+}
+
+func extractDijkstraPath(nodes map[int]*nodeInfo, valueTo int) []int {
+	path := make([]int, 100)[0:0]
+	path = append(path, valueTo)
+
+	for parentValue := nodes[valueTo].parent; parentValue > 0; parentValue = nodes[parentValue].parent {
+		path = append(path, parentValue)
+	}
+
+	for i, j := 0, len(path)-1; i < j; i, j = i+1, j-1 {
+		path[i], path[j] = path[j], path[i]
+	}
+
+	return path
 }
 
 func (graph *Graph) Dijkstra(valueFrom int, valueTo int) ([]int, error) {
@@ -109,7 +138,7 @@ func (graph *Graph) Dijkstra(valueFrom int, valueTo int) ([]int, error) {
 
 	for node := range *graph {
 		if node != valueFrom {
-			nodes[node] = &nodeInfo{false, 1<<(bits.UintSize-1) - 1, 0}
+			nodes[node] = &nodeInfo{false, maxInt, 0}
 		}
 	}
 
@@ -118,5 +147,20 @@ func (graph *Graph) Dijkstra(valueFrom int, valueTo int) ([]int, error) {
 		nodes[neighbourNode].cost = weight
 	}
 
-	return make([]int, 0), fmt.Errorf("no path from node %v to node %v", valueFrom, valueTo)
+	for nodeValue := nextNode(nodes); nodeValue > 0; nodeValue = nextNode(nodes) {
+		for neighbourNode, neighbourNodeWeight := range (*graph)[valueFrom].connections {
+			newCost := nodes[nodeValue].cost + neighbourNodeWeight
+			if newCost > nodes[neighbourNode].cost {
+				nodes[neighbourNode].cost = newCost
+				nodes[neighbourNode].parent = nodeValue
+			}
+		}
+		nodes[nodeValue].processed = true
+	}
+
+	if nodes[valueTo].cost == maxInt {
+		return make([]int, 0), fmt.Errorf("no path from nodeValue %v to nodeValue %v", valueFrom, valueTo)
+	}
+
+	return extractDijkstraPath(nodes, valueTo), nil
 }
