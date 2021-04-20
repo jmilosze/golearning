@@ -183,6 +183,16 @@ func TestGraph_BreadthFirst_CorrectOrder(t *testing.T) {
 		want  []int
 	}{
 		{
+			"valueTo is equal to valueFrom",
+			Graph{
+				10: &GNode{map[int]int{20: 1}},
+				20: &GNode{map[int]int{30: 1}},
+				30: emptyNode(),
+			},
+			args{10, 10},
+			[]int{10},
+		},
+		{
 			"3 nodes one by one",
 			Graph{
 				10: &GNode{map[int]int{20: 1}},
@@ -215,6 +225,90 @@ func TestGraph_BreadthFirst_CorrectOrder(t *testing.T) {
 			},
 			args{10, 60},
 			[]int{10, 20, 50, 60},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := tt.graph.BreadthFirst(tt.args.valueFrom, tt.args.valueTo)
+			if err != nil {
+				t.Errorf("BreadthFirst() error = %v", err)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("BreadthFirst() got = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestGraph_Dijkstra_Errors(t *testing.T) {
+	type args struct {
+		valueFrom int
+		valueTo   int
+	}
+	tests := []struct {
+		name    string
+		graph   Graph
+		args    args
+		want    []int
+		wantErr bool
+	}{
+		{
+			"valueFrom not in the graph",
+			Graph{10: emptyNode(), 20: emptyNode()},
+			args{5, 20},
+			make([]int, 0),
+			true,
+		},
+		{
+			"valueTo not in the graph",
+			Graph{10: emptyNode(), 20: emptyNode()},
+			args{10, 25},
+			make([]int, 0),
+			true,
+		},
+		{
+			"no path between nodes",
+			Graph{10: emptyNode(), 20: emptyNode()},
+			args{10, 20},
+			make([]int, 0),
+			true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := tt.graph.Dijkstra(tt.args.valueFrom, tt.args.valueTo)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Dijkstra() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Dijkstra() got = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestGraph_Dijkstra_correctOrder(t *testing.T) {
+	type args struct {
+		valueFrom int
+		valueTo   int
+	}
+	tests := []struct {
+		name  string
+		graph Graph
+		args  args
+		want  []int
+	}{
+		{
+			"valueTo is equal to valueFrom",
+			Graph{
+				10: &GNode{map[int]int{20: 1}},
+				20: &GNode{map[int]int{30: 2}},
+				30: emptyNode(),
+			},
+			args{10, 10},
+			[]int{10},
 		},
 	}
 	for _, tt := range tests {

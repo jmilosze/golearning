@@ -130,7 +130,14 @@ func extractDijkstraPath(nodes map[int]*nodeInfo, valueTo int) []int {
 }
 
 func (graph *Graph) Dijkstra(valueFrom int, valueTo int) ([]int, error) {
-	if valueFrom == valueFrom {
+	if _, ok := (*graph)[valueFrom]; ok != true {
+		return make([]int, 0), fmt.Errorf("no node with value %v", valueFrom)
+	}
+	if _, ok := (*graph)[valueTo]; ok != true {
+		return make([]int, 0), fmt.Errorf("no node with value %v", valueFrom)
+	}
+
+	if valueFrom == valueTo {
 		return []int{valueFrom}, nil
 	}
 
