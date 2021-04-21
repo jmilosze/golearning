@@ -289,7 +289,7 @@ func TestGraph_Dijkstra_Errors(t *testing.T) {
 	}
 }
 
-func TestGraph_Dijkstra_correctOrder(t *testing.T) {
+func TestGraph_Dijkstra_CorrectOrder(t *testing.T) {
 	type args struct {
 		valueFrom int
 		valueTo   int
