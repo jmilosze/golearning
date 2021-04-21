@@ -300,16 +300,16 @@ func TestGraph_Dijkstra_correctOrder(t *testing.T) {
 		args  args
 		want  []int
 	}{
-		//{
-		//	"valueTo is equal to valueFrom",
-		//	Graph{
-		//		10: &GNode{map[int]int{20: 1}},
-		//		20: &GNode{map[int]int{30: 2}},
-		//		30: emptyNode(),
-		//	},
-		//	args{10, 10},
-		//	[]int{10},
-		//},
+		{
+			"valueTo is equal to valueFrom",
+			Graph{
+				10: &GNode{map[int]int{20: 1}},
+				20: &GNode{map[int]int{30: 2}},
+				30: emptyNode(),
+			},
+			args{10, 10},
+			[]int{10},
+		},
 		{
 			"4 nodes",
 			Graph{
